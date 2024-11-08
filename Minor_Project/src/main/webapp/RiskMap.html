@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Risk Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map { height: 600px; width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        const map = L.map('map').setView([20.5937, 78.9629], 5); // Centered on India
+
+        // Add the tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Fetch the GeoJSON data from the servlet
+        fetch('/RiskZonesServlet')
+            .then(response => response.json())
+            .then(data => {
+                // Add markers to the map
+                data.forEach(feature => {
+                    const coords = feature.geometry.coordinates;
+                    const date = feature.properties.date;
+                    const timestamp = feature.properties.timestamp;
+
+                    const marker = L.marker([coords[1], coords[0]]).addTo(map);
+                    
+                    marker.bindPopup(`Date: ${date}<br>Timestamp: ${timestamp}`);
+                });
+            })
+            .catch(error => console.error('Error loading risk map data:', error));
+    </script>
+</body>
+</html>

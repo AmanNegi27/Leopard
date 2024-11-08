@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Collection Form</title>
+    <script>
+        // Fetching the latitude, longitude, and accuracy from the browser's geolocation API
+        function fetchGeolocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    document.getElementById("latitude").value = position.coords.latitude;
+                    document.getElementById("longitude").value = position.coords.longitude;
+                    document.getElementById("accuracy").value = position.coords.accuracy;
+                }, function(error) {
+                    // Handle error here (optional)
+                    alert("Error retrieving geolocation: " + error.message);
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // Automatically fill the date and timestamp when the page loads
+        function setDateAndTimestamp() {
+            // Get current date and time
+            var now = new Date();
+
+            // Format the date as YYYY-MM-DD
+            var date = now.getFullYear() + '-' + 
+                ('0' + (now.getMonth() + 1)).slice(-2) + '-' + 
+                ('0' + now.getDate()).slice(-2);
+            document.getElementById("date").value = date;
+
+            // Format the timestamp to show only time (HH:MM:SS)
+            var time = ('0' + now.getHours()).slice(-2) + ':' + 
+                ('0' + now.getMinutes()).slice(-2) + ':' + 
+                ('0' + now.getSeconds()).slice(-2);
+            document.getElementById("timestamp").value = time;
+        }
+
+        // Call functions as soon as the page loads
+        window.onload = function() {
+            fetchGeolocation();
+            setDateAndTimestamp();
+        }
+    </script>
+</head>
+<body>
+    <h1>Data Collection Form</h1>
+    <form action="DataCollectionServlet" method="POST" enctype="multipart/form-data">
+    	<label for="username">Username:</label>
+		<input type="text" id="username" name="username" required />
+    	
+        <!-- Date input field (automatically set to current date) -->
+        <label for="date">Date:</label>
+        <input type="text" id="date" name="date" required><br><br>
+
+        <!-- Timestamp input field (automatically set to current time only) -->
+        <label for="timestamp">Timestamp:</label>
+        <input type="text" id="timestamp" name="timestamp" required><br><br>
+
+        <!-- Latitude input field (auto-filled by geolocation) -->
+        <label for="latitude">Latitude:</label>
+        <input type="text" id="latitude" name="latitude" readonly><br><br>
+
+        <!-- Longitude input field (auto-filled by geolocation) -->
+        <label for="longitude">Longitude:</label>
+        <input type="text" id="longitude" name="longitude" readonly><br><br>
+
+        <!-- Accuracy input field (auto-filled by geolocation) -->
+        <label for="accuracy">Accuracy:</label>
+        <input type="text" id="accuracy" name="accuracy" readonly><br><br>
+
+        <!-- Image upload input -->
+        <label for="image">Image:</label>
+        <input type="file" name="image" id="image"><br><br>
+
+        <!-- Submit button -->
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
